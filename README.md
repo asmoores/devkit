@@ -2,7 +2,7 @@
 
 ## Overview
 
-A tool for setup and lifecycle management of multi component developer projects.
+A tool for setup and lifecycle management of projects made up of components in multiple git repositories and using a variety of development tools.
 
 TODO:
 1. Define system software required to be installed, e.g. homebrew, sdkman, docker
