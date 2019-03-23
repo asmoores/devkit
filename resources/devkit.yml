@@ -1,0 +1,7 @@
+manage:
+  base_dir: sandbox/
+  repositories:
+    deployer: https://bitbucket.org/agilesoftwareengineers/deployer.git
+    lookup-service: https://bitbucket.org/agilesoftwareengineers/lookup-service.git
+    publish-service: https://bitbucket.org/agilesoftwareengineers/publish-service.git
+    webui: https://bitbucket.org/agilesoftwareengineers/webui.git
