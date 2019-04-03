@@ -31,6 +31,12 @@ This will clone the projects listed in `resources\devkit.yml`.  The example conf
 uses a folder called sandbox which is assumed to be a sub-folder of the folder from
 which the `devkit.sh` shell script is executed.
 
+### Install package in development mode for use from the command line 
+
+` pip install -e .`
+
+Then devkit can be called from command line `$ devkit setup` as long as there is a `resources/devkit.yaml` in the folder where it is being executed.
+
 ## Utilities
 
 1. Script to build all the repos.

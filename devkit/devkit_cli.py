@@ -103,6 +103,12 @@ def setup():
     run("resources/devkit.yml")
 
 
+def main():
+    print('Number of arguments:', len(sys.argv), 'arguments.')
+    print('Argument List:', str(sys.argv))
+    dispatcher(command=sys.argv[1:])
+
+
 if __name__ == '__main__':
     # print('Number of arguments:', len(sys.argv), 'arguments.')
     # print('Argument List:', str(sys.argv))

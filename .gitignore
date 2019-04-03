@@ -9,3 +9,5 @@ lib
 sandbox/
 pip-selfcheck.json
 pyvenv.cfg
+dist/
+devkit.egg-info
