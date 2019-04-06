@@ -24,12 +24,12 @@ def run(config_file):
     home = config['manage']['base_dir']
     print("home is: ", home)
 
-    repos = config['manage']['repositories'].items()
+    projects = config['manage']['projects']
 
-    for repo_name, repo_url in repos.__iter__():
-        print("name: ", repo_name)
-        print("value: ", repo_url)
-        Repo.clone_from(repo_url, home + repo_name)
+    for project in projects.__iter__():
+        print("name: ", project['name'])
+        print("value: ", project['url'])
+        Repo.clone_from(project['url'], home + project['name'])
 
 
 def yaml_loader(filepath):
@@ -55,29 +55,29 @@ def init():
     config = yaml_loader("resources/devkit.yml")
     home = config['manage']['base_dir']
     print("home is: ", home)
-    repos = config['manage']['repositories'].items()
-    return home, repos
+    projects = config['manage']['projects']
+    return home, projects
 
 
 def info():
-    home, repos = init()
+    home, projects = init()
 
     t = []
-    for repo_name, repo_url in repos.__iter__():
-        repo = Repo(home + repo_name)
+    for project in projects.__iter__():
+        repo = Repo(home + project['name'])
         res = repo.active_branch
-        t.append([repo_name, res.name, repo.is_dirty()])
-    print(tabulate(t, headers=['repo', 'branch', 'changes?']))
+        t.append([project['name'], res.name, project['url'], project['build'], repo.is_dirty()])
+    print(tabulate(t, headers=['repo', 'branch', 'url', 'build', 'changes?']))
 
 
 def update(options):
     print("update the repos with ", options)
 
-    home, repos = init()
+    home, projects = init()
 
-    for repo_name, repo_url in repos.__iter__():
-        print("updating: " + home + repo_name)
-        repo = Repo(home + repo_name)
+    for project in projects.__iter__():
+        print("updating: " + home + project['name'])
+        repo = Repo(home + project['name'])
         res = repo.git.pull("--rebase")
         print(res)
 
@@ -85,13 +85,19 @@ def update(options):
 def build(options):
     print("build project with ", options)
 
-    home, repos = init()
+    home, projects = init()
 
     print("--------------------------------")
-    for repo_name, repo_url in repos.__iter__():
+    for project in projects.__iter__():
         with open(os.devnull, "w") as f:
-            print("Building " + repo_name, end='')
-            res = call(["./gradlew", "build"], cwd=str(home + repo_name), stdout=f)
+            print("Building " + project['name'], end='')
+            if project['build'] == 'gradle':
+                res = call(["./gradlew", "build"], cwd=str(home + project['name']), stdout=f)
+            elif project['build'] == 'maven':
+                res = call(["mvn", "clean", "install"], cwd=str(home + project['name']), stdout=f)
+            else:
+                print("Unknown type of build.")
+                res = 1
             if res == 0:
                 print("\t\u2713")
             else:
