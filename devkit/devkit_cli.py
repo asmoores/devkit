@@ -35,7 +35,7 @@ def run(config_file):
 def yaml_loader(filepath):
     """Loads a yaml file"""
     with open(filepath, "r") as file_descriptor:
-        print("file descriptor is: ", file_descriptor)
+        # print("file descriptor is: ", file_descriptor)
         data = load(file_descriptor)
     return data
 
@@ -104,8 +104,8 @@ def setup():
 
 
 def main():
-    print('Number of arguments:', len(sys.argv), 'arguments.')
-    print('Argument List:', str(sys.argv))
+    # print('Number of arguments:', len(sys.argv), 'arguments.')
+    # print('Argument List:', str(sys.argv))
     dispatcher(command=sys.argv[1:])
 
 
