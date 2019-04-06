@@ -1,7 +1,19 @@
 manage:
-  base_dir: sandbox/
-  repositories:
-    deployer: https://bitbucket.org/agilesoftwareengineers/deployer.git
-    lookup-service: https://bitbucket.org/agilesoftwareengineers/lookup-service.git
-    publish-service: https://bitbucket.org/agilesoftwareengineers/publish-service.git
-    webui: https://bitbucket.org/agilesoftwareengineers/webui.git
+  base_dir: ./
+  projects:
+    -
+      name: deployer
+      url: https://github.com/asmoores/deployer.git
+      build: maven
+    -
+      name: lookup-service
+      url: https://github.com/asmoores/lookup-service.git
+      build: gradle
+    -
+      name: publish-service
+      url: https://github.com/asmoores/publish-service.git
+      build: gradle
+    -
+      name: webui
+      url: https://github.com/asmoores/webui.git
+      build: gradle
