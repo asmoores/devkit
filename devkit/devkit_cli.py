@@ -41,16 +41,32 @@ def yaml_loader(filepath):
 
 
 def dispatcher(command):
-    if command == ['update']:
-        update("options")
-    elif command == ['build']:
-        build("options")
-    elif command == ['info']:
-        info()
-    elif command == ['setup']:
-        setup()
-    elif command == ['status']:
-        status()
+    """
+    Dispatcher function that passes control to the function that implements the required command.
+
+    :param command: String name of command
+    :return: nothing
+
+    This approach works until we need to pass options to the commands.
+
+    Create a dictionary (each time so not performant) and use the command call parameter to index
+    into the dictionary and execute the function stored as the value of the key value pair. Provide
+    a default function to avoid a KeyError
+
+    """
+
+    {
+        'update': update,
+        'build': build,
+        'info': info,
+        'setup': setup,
+        'status': status,
+        'clean': housekeeping,
+    }.get(command, default_command)()
+
+
+def default_command():
+    print("Explain what commands are available")
 
 
 def init():
@@ -121,6 +137,18 @@ def build(options):
         print("--------------------------------")
 
 
+def housekeeping():
+    print("housekeeping")
+
+    home, projects = init()
+
+    for project in projects.__iter__():
+        print("cleaning: " + home + project['name'])
+        repo = Repo(home + project['name'])
+        result = repo.git.remote("prune", ".")
+        print(result)
+
+
 def setup():
     run("resources/devkit.yml")
 
@@ -128,7 +156,7 @@ def setup():
 def main():
     # print('Number of arguments:', len(sys.argv), 'arguments.')
     # print('Argument List:', str(sys.argv))
-    dispatcher(command=sys.argv[1:])
+    dispatcher(command=sys.argv[1:][0])
 
 
 if __name__ == '__main__':
