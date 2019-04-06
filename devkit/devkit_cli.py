@@ -49,6 +49,8 @@ def dispatcher(command):
         info()
     elif command == ['setup']:
         setup()
+    elif command == ['status']:
+        status()
 
 
 def init():
@@ -66,8 +68,19 @@ def info():
     for project in projects.__iter__():
         repo = Repo(home + project['name'])
         res = repo.active_branch
-        t.append([project['name'], res.name, project['url'], project['build'], repo.is_dirty()])
-    print(tabulate(t, headers=['repo', 'branch', 'url', 'build', 'changes?']))
+        t.append([project['name'], project['url'], project['build']])
+    print(tabulate(t, headers=['project', 'url', 'build']))
+
+
+def status():
+    home, projects = init()
+
+    t = []
+    for project in projects.__iter__():
+        repo = Repo(home + project['name'])
+        res = repo.active_branch
+        t.append([project['name'], res.name, repo.is_dirty(), repo.head.commit.summary])
+    print(tabulate(t, headers=['project', 'branch', 'local changes', 'latest commit']))
 
 
 def update(options):
