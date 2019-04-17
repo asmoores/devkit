@@ -67,7 +67,6 @@ def info():
     t = []
     for project in projects.__iter__():
         repo = Repo(home + project['name'])
-        res = repo.active_branch
         t.append([project['name'], project['url'], project['build']])
     print(tabulate(t, headers=['project', 'url', 'build']))
 
@@ -78,8 +77,12 @@ def status():
     t = []
     for project in projects.__iter__():
         repo = Repo(home + project['name'])
-        res = repo.active_branch
-        t.append([project['name'], res.name, repo.is_dirty(), repo.head.commit.summary])
+        # If HEAD is a detached then gitpython returns TypeError, this error happens if a tag is checked out
+        try:
+            branch_or_tag = repo.active_branch.name
+        except TypeError:
+            branch_or_tag = repo.git.describe()
+        t.append([project['name'], branch_or_tag, repo.is_dirty(), repo.head.commit.summary])
     print(tabulate(t, headers=['project', 'branch', 'local changes', 'latest commit']))
 
 
