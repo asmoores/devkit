@@ -94,6 +94,10 @@ def update(options):
     for project in projects.__iter__():
         print("updating: " + home + project['name'])
         repo = Repo(home + project['name'])
+        try:
+            repo.active_branch.name
+        except TypeError:
+            continue
         res = repo.git.pull("--rebase")
         print(res)
 
@@ -106,18 +110,19 @@ def build(options):
     print("--------------------------------")
     for project in projects.__iter__():
         with open(os.devnull, "w") as f:
-            print("Building " + project['name'], end='')
+            print("Building " + project['name'], end='', flush=True)
             if project['build'] == 'gradle':
                 res = call(["./gradlew", "build"], cwd=str(home + project['name']), stdout=f)
             elif project['build'] == 'maven':
-                res = call(["mvn", "clean", "install"], cwd=str(home + project['name']), stdout=f)
+                res = call(["mvn", "clean", "install"], cwd=str(home + project['name']), stdout=f, stderr=f)
+                #res = call(["mvn", "clean", "install"], cwd=str(home + project['name']))
             else:
-                print("Unknown type of build.")
+                print("\tUnknown type of build.", end='')
                 res = 1
             if res == 0:
                 print("\t\u2713")
             else:
-                print('X')
+                print(' X')
         print("--------------------------------")
 
 
