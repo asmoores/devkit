@@ -11,7 +11,7 @@ setup(
     description='Project lifecycle tool for polyglot micro-services based development projects.',
     url='https://github.com/asmoores/devkit',
     author='Andrew Moores',
-    install_requires=['pyyaml', 'gitpython', 'tabulate'],
+    install_requires=['pyyaml', 'gitpython', 'tabulate', 'pytest'],
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',

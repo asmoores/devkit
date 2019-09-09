@@ -7,6 +7,9 @@ from pathlib import Path
 from devkit import devkit_cli
 
 
+def test_passing():
+    assert (1, 2, 3) == (1, 2, 3)
+
 @pytest.fixture
 def basic_resource_file(tmpdir):
     os.mkdir(tmpdir.join('resources'))
