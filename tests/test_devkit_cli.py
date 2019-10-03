@@ -16,7 +16,6 @@ def basic_resource_file(tmpdir):
     file.close()
     return basic_resource_file
 
-
 @pytest.fixture()
 def resource_file(tmpdir):
     resource_file = tmpdir.join('resources/devkit.yml')
@@ -37,11 +36,21 @@ def resource_file(tmpdir):
 
 
 def test_setup(resource_file):
+    """
+    Note,  Referencing the fixture name as an arguement to the test function executes the fixture and provides its
+    return value, if any, in a variable with the same name as the fixture.
+
+    Check the resource file is correctly parsed and that each git repo is cloned.
+
+    :param resource_file:
+    :return:
+    """
+
     # WHEN
     devkit_cli.run(resource_file)
 
     # THEN
-    for entry in os.scandir(os.curdir + "/sandbox"):
+    for entry in os.scandir(os.path.dirname(resource_file)):
         if entry.is_file():
             print("test found file:: " + entry.name)
         else:
