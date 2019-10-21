@@ -40,36 +40,7 @@ def yaml_loader(filepath):
     return data
 
 
-def dispatcher(command):
-    """
-    Dispatcher function that passes control to the function that implements the required command.
-
-    :param command: String name of command
-    :return: nothing
-
-    This approach works until we need to pass options to the commands.
-
-    Create a dictionary (each time so not performant) and use the command call parameter to index
-    into the dictionary and execute the function stored as the value of the key value pair. Provide
-    a default function to avoid a KeyError
-
-    """
-
-    {
-        'update': update,
-        'build': build,
-        'info': info,
-        'setup': setup,
-        'status': status,
-        'clean': housekeeping,
-    }.get(command, default_command)()
-
-
-def default_command():
-    print("Explain what commands are available")
-
-
-def init():
+def init(options):
     config = yaml_loader("resources/devkit.yml")
     home = config['manage']['base_dir']
     print("home is: ", home)
@@ -77,8 +48,8 @@ def init():
     return home, projects
 
 
-def info():
-    home, projects = init()
+def info(options):
+    home, projects = init(None)
 
     t = []
     for project in projects.__iter__():
@@ -87,8 +58,8 @@ def info():
     print(tabulate(t, headers=['project', 'url', 'build']))
 
 
-def status():
-    home, projects = init()
+def status(options):
+    home, projects = init(None)
 
     t = []
     for project in projects.__iter__():
@@ -103,9 +74,9 @@ def status():
 
 
 def update(options):
-    print("update the repos with ", options)
+    # print("update the repos with ", options)
 
-    home, projects = init()
+    home, projects = init(None)
 
     for project in projects.__iter__():
         print("updating: " + home + project['name'])
@@ -117,14 +88,17 @@ def update(options):
 def build(options):
     print("build project with ", options)
 
-    home, projects = init()
+    home, projects = init(None)
 
     print("--------------------------------")
     for project in projects.__iter__():
         with open(os.devnull, "w") as f:
             print("Building " + project['name'], end='')
             if project['build'] == 'gradle':
-                res = call(["./gradlew", "build"], cwd=str(home + project['name']), stdout=f)
+                if (options == "quiet"):
+                    res = call(["./gradlew", "build"], cwd=str(home + project['name']), stdout=f)
+                else:
+                    res = call(["./gradlew", "build"], cwd=str(home + project['name']))
             elif project['build'] == 'maven':
                 res = call(["mvn", "clean", "install"], cwd=str(home + project['name']), stdout=f)
             else:
@@ -137,7 +111,7 @@ def build(options):
         print("--------------------------------")
 
 
-def housekeeping():
+def housekeeping(options):
     print("housekeeping")
 
     home, projects = init()
@@ -148,15 +122,45 @@ def housekeeping():
         result = repo.git.remote("prune", ".")
         print(result)
 
+def help(options):
+    print("DevKit supports the following commands:")
+    print("build")
+    print("update")
+    print("status")
+    print("info")
+    print("houskeeping")
+    print("setup")
+    print("init")
 
-def setup():
+def setup(options):
     run("resources/devkit.yml")
 
 
 def main():
     # print('Number of arguments:', len(sys.argv), 'arguments.')
     # print('Argument List:', str(sys.argv))
-    dispatcher(command=sys.argv[1:][0])
+    dispatcher(command=sys.argv[1:][0], options=sys.argv[2:])
+
+
+def dispatcher(command, options):
+    """
+    Dispatcher function that passes control to the function that implements the required command.
+
+    :param command: String name of command
+    :param options: Array of options to be passed to the command
+    :return: nothing
+
+    """
+
+    if len(options) > 0:
+        globals()[command](options[0])
+    else:
+        globals()[command](None)
+
+
+def default_command():
+    print("Explain what commands are available")
+
 
 
 if __name__ == '__main__':
