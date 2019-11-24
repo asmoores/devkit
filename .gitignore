@@ -11,3 +11,4 @@ pip-selfcheck.json
 pyvenv.cfg
 dist/
 devkit.egg-info
+.DS_Store
