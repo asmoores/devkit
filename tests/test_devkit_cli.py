@@ -10,6 +10,7 @@ from devkit import devkit_cli
 def test_passing():
     assert (1, 2, 3) == (1, 2, 3)
 
+
 @pytest.fixture
 def basic_resource_file(tmpdir):
     os.mkdir(tmpdir.join('resources'))
@@ -28,7 +29,7 @@ def resource_file(tmpdir):
     print("parent:: " + str(Path().resolve().parent))
     print("dest:: " + str(resource_file))
     os.mkdir(tmpdir.join('resources'))
-    copyfile(str(Path().resolve().parent) + '/resources/devkit.yml', str(resource_file))
+    copyfile(str(Path().resolve().parent) + '/tests/resources/devkit.yml', str(resource_file))
     os.chdir(tmpdir)
     for entry in os.scandir(os.curdir):
         if entry.is_file():
@@ -39,17 +40,18 @@ def resource_file(tmpdir):
     os.chdir(cwd)
 
 
-def test_setup(resource_file):
+def test_setup(resource_file, tmpdir):
     # WHEN
     devkit_cli.run(resource_file)
 
     # THEN
-    for entry in os.scandir(os.curdir + "/sandbox"):
+    for entry in os.scandir(tmpdir):
         if entry.is_file():
             print("test found file:: " + entry.name)
         else:
             print("test found dir:: " + entry.name)
-            assert(any(entry.name in x for x in ['deployer', 'lookup-service', 'publish-service', 'webui']))
+            assert(any(entry.name in x for x in
+                       ['deployer', 'lookup-service', 'publish-service', 'webui', 'resources']))
     assert(1 == 1)
 
 
